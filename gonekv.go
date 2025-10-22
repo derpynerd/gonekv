@@ -29,16 +29,24 @@ func getActionAndArgs() (string, []string, error) {
 
 	action := os.Args[1]
 	var errMsg string = ""
+	var args []string
 	switch action {
 	case "get", "delete":
 		if len(os.Args) <= 2 {
 			errMsg = fmt.Sprintf("gonekv: Missing operand: gonekv [action] [key]\nExample Usage: gonekv %s '1'", action)
+			break
 		}
+
+		args = append(args, os.Args[2]) // Get key name
 
 	case "set", "put":
 		if len(os.Args) <= 3 {
 			errMsg = fmt.Sprintf("gonekv: Missing operand: gonekv [action] [key] [value]\nExample Usage: gonekv %s '1' 'Lorem ipsum'", action)
+			break
 		}
+
+		args = append(args, os.Args[2]) // Get key name
+		args = append(args, os.Args[3]) // Get value name
 
 	default:
 		panic("Invalid action found: " + action)
@@ -47,7 +55,7 @@ func getActionAndArgs() (string, []string, error) {
 		return action, nil, errors.New(errMsg)
 	}
 
-	return action, nil, nil
+	return action, args, nil
 }
 
 func handleGet(args []string) error {

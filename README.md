@@ -1,2 +1,2 @@
 # gonekv
-GoneKV - GOne Key Value store 
+GoneKV - **GO**ne **K**ey **V**alue store 
