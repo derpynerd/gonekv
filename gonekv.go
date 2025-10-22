@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 func contains(list []string, str string) bool {
@@ -16,7 +18,7 @@ func contains(list []string, str string) bool {
 	return false
 }
 
-func getActionAndArgs() (string, []string, error) {
+func parseCommandLine() (string, []string, error) {
 
 	if len(os.Args) <= 1 {
 		return "", nil, errors.New("gonekv: Missing required arguments: gonekv [action] [operand(s)]\nExample Usage: gonekv set '1' 'Lorem ipsum'")
@@ -58,24 +60,62 @@ func getActionAndArgs() (string, []string, error) {
 	return action, args, nil
 }
 
-func handleGet(args []string) error {
+func handleGet(args []string) (string, error) {
+	key := args[0]
 
-	return nil
+	f, err := os.OpenFile("store.dat", os.O_RDONLY, 0664)
+	if err != nil {
+		panic("Failed to open/read file: " + err.Error())
+	}
+	defer f.Close()
+
+	var value = ""
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		var currentLine = scanner.Text()
+		var currentLineKey = strings.Split(currentLine, ":")[0]
+
+		if currentLineKey == key {
+			value = strings.Split(currentLine, ":")[1]
+			break
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
+
+	return value, nil
 }
 
 func handleSet(args []string) error {
+	key := args[0]
+	value := args[1]
+	var pair = fmt.Sprintf("%s:%s\n", key, value)
 
-	// fd, err = os.WriteFile("store.dat")
+	f, err := os.OpenFile("store.dat", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0664)
+	if err != nil {
+		panic("Failed to create/append to file: " + err.Error())
+	}
+	defer f.Close()
+
+	if _, err = f.WriteString(pair); err != nil {
+		panic(err)
+	}
 
 	return nil
 }
 
 func handlePut(args []string) error {
 
+	// TODO
+
 	return nil
 }
 
 func handleDelete(args []string) error {
+
+	// TODO
 
 	return nil
 }
@@ -83,18 +123,35 @@ func handleDelete(args []string) error {
 func main() {
 	log.SetFlags(0) // Disable date time logging
 
-	action, args, err := getActionAndArgs()
+	action, args, err := parseCommandLine()
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("%s", action)
+	fmt.Printf("%s - %v\n", action, args)
 	switch action {
 	case "get":
-		err = handleGet(args)
+		value, err := handleGet(args)
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+
+		if value != "" {
+			fmt.Printf("value: %s", value)
+		} else {
+			fmt.Printf("key [%s] does not exist", args[0])
+		}
+
 	case "set":
 		err = handleSet(args)
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("Successfully set key-value pair => %s: %s", args[0], args[1])
 	case "put":
 		err = handlePut(args)
 	case "delete":
