@@ -1,0 +1,29 @@
+$ gonekv get 1
+get - [1]
+key [1] does not exist
+$ gonekv set 1 tomato
+set - [1 tomato]
+Successfully set key-value pair => 1: tomato
+$ gonekv set 45 'hi world'
+set - [45 hi world]
+Successfully set key-value pair => 45: hi world
+$ gonekv set 86 'the world is your oyster'
+set - [86 the world is your oyster]
+Successfully set key-value pair => 86: the world is your oyster
+$ gonekv get 45
+get - [45]
+value: hi world
+$ gonekv delete 45
+delete - [45]
+$ gonekv get 45
+get - [45]
+key [45] does not exist
+$ gonekv get 86
+get - [86]
+value: the world is your oyster
+$ gonekv put 86 'bazinga'
+put - [86 bazinga]
+Successfully put key-value pair => 86: bazinga
+$ gonekv get 86
+get - [86]
+value: bazinga
