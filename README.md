@@ -8,7 +8,7 @@ A simple **K**ey **V**alue store written in **GO**
 - delete
 
 ### Examples - 
-Refer: [gonekv-sample-usage](./assets/gonekv-sample-usage.txt)
+Refer: [gonekv-sample-usage](./assets/gonekv-sample-usage.txt) - [gonekv-sample-usage-kv-state](./assets/gonekv-sample-usage-kv-state.txt)
 
 ### Todo -
 - Add segment & compaction logic
