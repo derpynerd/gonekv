@@ -75,9 +75,8 @@ func handleGet(args []string) (string, error) {
 	for scanner.Scan() {
 		var currentLine = scanner.Text()
 		var currentLineKey = strings.Split(currentLine, ":")[0]
-		var currentLineValue = strings.Split(currentLine, ":")[1]
 
-		if currentLineKey == key && currentLineValue != "" { // Ignore key if value is empty string i.e. deleted record
+		if currentLineKey == key { // Ignore key if value is empty string i.e. deleted record
 			value = strings.Split(currentLine, ":")[1]
 		} // Find the last value for matched key
 	}
