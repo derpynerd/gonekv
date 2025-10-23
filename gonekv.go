@@ -39,7 +39,7 @@ func parseCommandLine() (string, []string, error) {
 			break
 		}
 
-		args = append(args, os.Args[2]) // Get key name
+		args = append(args, os.Args[2]) // Get key text
 
 	case "set", "put":
 		if len(os.Args) <= 3 {
@@ -47,11 +47,12 @@ func parseCommandLine() (string, []string, error) {
 			break
 		}
 
-		args = append(args, os.Args[2]) // Get key name
-		args = append(args, os.Args[3]) // Get value name
+		args = append(args, os.Args[2]) // Get key text
+		args = append(args, os.Args[3]) // Get value text
 
 	default:
-		panic("Invalid action found: " + action)
+		log.Fatal("Invalid action found: " + action)
+		os.Exit(1)
 	}
 	if errMsg != "" {
 		return action, nil, errors.New(errMsg)
