@@ -75,11 +75,11 @@ func handleGet(args []string) (string, error) {
 	for scanner.Scan() {
 		var currentLine = scanner.Text()
 		var currentLineKey = strings.Split(currentLine, ":")[0]
+		var currentLineValue = strings.Split(currentLine, ":")[1]
 
-		if currentLineKey == key {
+		if currentLineKey == key && currentLineValue != "" { // Ignore key if value is empty string i.e. deleted record
 			value = strings.Split(currentLine, ":")[1]
-			break
-		}
+		} // Find the last value for matched key
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -92,6 +92,12 @@ func handleGet(args []string) (string, error) {
 func handleSet(args []string) error {
 	key := args[0]
 	value := args[1]
+
+	// Double-checking to not add empty value as it could break delete functionality
+	if value == "" {
+		log.Fatal("Value of key cannot be empty")
+		os.Exit(1)
+	}
 	var pair = fmt.Sprintf("%s:%s\n", key, value)
 
 	f, err := os.OpenFile("store.dat", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0664)
@@ -115,8 +121,18 @@ func handlePut(args []string) error {
 }
 
 func handleDelete(args []string) error {
+	key := args[0]
+	var pair = fmt.Sprintf("%s:\n", key)
 
-	// TODO
+	f, err := os.OpenFile("store.dat", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0664)
+	if err != nil {
+		panic("Failed to create/append to file: " + err.Error())
+	}
+	defer f.Close()
+
+	if _, err = f.WriteString(pair); err != nil {
+		panic(err)
+	}
 
 	return nil
 }
