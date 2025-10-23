@@ -21,7 +21,7 @@ func contains(list []string, str string) bool {
 func parseCommandLine() (string, []string, error) {
 
 	if len(os.Args) <= 1 {
-		return "", nil, errors.New("gonekv: Missing required arguments: gonekv [action] [operand(s)]\nExample Usage: gonekv set '1' 'Lorem ipsum'")
+		return "", nil, errors.New("gonekv: Missing required arguments: gonekv [action] [operand(s)]\nExample Usage: gonekv set 1 Lorem ipsum")
 	}
 
 	listOfActions := []string{"get", "set", "put", "delete"}
@@ -35,7 +35,7 @@ func parseCommandLine() (string, []string, error) {
 	switch action {
 	case "get", "delete":
 		if len(os.Args) <= 2 {
-			errMsg = fmt.Sprintf("gonekv: Missing operand: gonekv [action] [key]\nExample Usage: gonekv %s '1'", action)
+			errMsg = fmt.Sprintf("gonekv: Missing operand: gonekv [action] [key]\nExample Usage: gonekv %s 1", action)
 			break
 		}
 
@@ -43,7 +43,7 @@ func parseCommandLine() (string, []string, error) {
 
 	case "set", "put":
 		if len(os.Args) <= 3 {
-			errMsg = fmt.Sprintf("gonekv: Missing operand: gonekv [action] [key] [value]\nExample Usage: gonekv %s '1' 'Lorem ipsum'", action)
+			errMsg = fmt.Sprintf("gonekv: Missing operand: gonekv [action] [key] [value]\nExample Usage: gonekv %s 1 Lorem ipsum", action)
 			break
 		}
 
@@ -89,7 +89,7 @@ func handleGet(args []string) (string, error) {
 	return value, nil
 }
 
-func handleSet(args []string) error {
+func handleSetOrPut(args []string) error {
 	key := args[0]
 	value := args[1]
 
@@ -113,16 +113,9 @@ func handleSet(args []string) error {
 	return nil
 }
 
-func handlePut(args []string) error {
-
-	// TODO
-
-	return nil
-}
-
 func handleDelete(args []string) error {
 	key := args[0]
-	var pair = fmt.Sprintf("%s:\n", key)
+	var pair = fmt.Sprintf("%s:\n", key) // Add new record for key with empty value - signifying that this record is deleted
 
 	f, err := os.OpenFile("store.dat", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
@@ -161,16 +154,14 @@ func main() {
 			fmt.Printf("key [%s] does not exist", args[0])
 		}
 
-	case "set":
-		err = handleSet(args)
+	case "set", "put":
+		err = handleSetOrPut(args)
 		if err != nil {
 			log.Fatal(err)
 			os.Exit(1)
 		}
 
-		fmt.Printf("Successfully set key-value pair => %s: %s", args[0], args[1])
-	case "put":
-		err = handlePut(args)
+		fmt.Printf("Successfully %s key-value pair => %s: %s", action, args[0], args[1])
 	case "delete":
 		err = handleDelete(args)
 	}
