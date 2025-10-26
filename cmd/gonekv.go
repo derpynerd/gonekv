@@ -8,15 +8,15 @@ import (
 	"strings"
 )
 
-func Get(key string) (success bool) {
+func Get(key string) (success string, err error) {
 
 	f, err := os.OpenFile("store.dat", os.O_RDONLY, 0664)
 	if err != nil {
-		panic("Failed to open/read file: " + err.Error())
+		panic("Fatal: Failed to open/read file: " + err.Error())
 	}
 	defer f.Close()
 
-	var value = ""
+	var value = "" // If value is empty string then it is a deleted record
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		var currentLine = scanner.Text()
@@ -31,13 +31,7 @@ func Get(key string) (success bool) {
 		panic(err)
 	}
 
-	if value != "" {
-		fmt.Printf("Value for [%s]: %s", key, value)
-	} else {
-		fmt.Printf("Key [%s] does not exist", key) // If value is empty string then it is a deleted record
-	}
-
-	return true
+	return value, nil
 }
 
 func Set(key string, value string) (success bool) {
