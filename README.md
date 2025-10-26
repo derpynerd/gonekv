@@ -13,3 +13,4 @@ Refer: [gonekv-sample-usage](./assets/gonekv-sample-usage.txt) - [gonekv-sample-
 ### Todo -
 - Add segment & compaction logic
 - Indexing logic
+- Add unit test cases for specific sequence of command operations
