@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"gonekv/common"
 	"log"
 	"os"
 
@@ -37,8 +38,10 @@ func Put(key string, value string) (success bool) {
 		log.Fatal("Value of key cannot be empty")
 		return false
 	}
-	var pair = fmt.Sprintf("%s:%s\n", key, value)
 
+	common.CompactionCheck()
+
+	var pair = fmt.Sprintf("%s:%s\n", key, value)
 	f, err := os.OpenFile("store.dat", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
 		panic("Failed to create/append to file: " + err.Error())

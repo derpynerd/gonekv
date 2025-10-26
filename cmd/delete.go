@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"gonekv/common"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -30,8 +31,9 @@ func Delete(key string) (sucess bool) {
 		return false
 	}
 
-	var pair = fmt.Sprintf("%s:\n", key) // Add new record for key with empty value - signifying that this record is deleted
+	common.CompactionCheck()
 
+	var pair = fmt.Sprintf("%s:\n", key) // Add new record for key with empty value - signifying that this record is deleted
 	f, err := os.OpenFile("store.dat", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
 		panic("Failed to create/append to file: " + err.Error())
