@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func Get(key string) (success string, err error) {
+func Get(key string) (success string) {
 
 	f, err := os.OpenFile("store.dat", os.O_RDONLY, 0664)
 	if err != nil {
@@ -31,15 +31,23 @@ func Get(key string) (success string, err error) {
 		panic(err)
 	}
 
-	return value, nil
+	return value
 }
 
 func Set(key string, value string) (success bool) {
 
-	// Double-checking to not add empty value as it could break delete functionality
+	existingValue := Get(key)
+
+	// Checking if key exists, if not then exit
+	if existingValue != "" {
+		fmt.Printf("Key [%s] already exists", key)
+		return false
+	}
+
+	// Double-checking to not add empty value as it breaks delete functionality
 	if value == "" {
-		log.Fatal("Value of key cannot be empty")
-		os.Exit(1)
+		log.Fatal("Value cannot be empty")
+		return false
 	}
 	var pair = fmt.Sprintf("%s:%s\n", key, value)
 
@@ -58,10 +66,18 @@ func Set(key string, value string) (success bool) {
 
 func Put(key string, value string) (success bool) {
 
-	// Double-checking to not add empty value as it could break delete functionality
+	existingValue := Get(key)
+
+	// Checking if key exists, if not then exit
+	if existingValue == "" {
+		fmt.Printf("Key [%s] doesn't exist", key)
+		return false
+	}
+
+	// Double-checking to not add empty value as it breaks delete functionality
 	if value == "" {
 		log.Fatal("Value of key cannot be empty")
-		os.Exit(1)
+		return false
 	}
 	var pair = fmt.Sprintf("%s:%s\n", key, value)
 
@@ -79,6 +95,14 @@ func Put(key string, value string) (success bool) {
 }
 
 func Delete(key string) (sucess bool) {
+
+	existingValue := Get(key)
+
+	// Checking if key exists, if not then exit
+	if existingValue == "" {
+		fmt.Printf("Key [%s] doesn't exist\n", key)
+		return false
+	}
 
 	var pair = fmt.Sprintf("%s:\n", key) // Add new record for key with empty value - signifying that this record is deleted
 

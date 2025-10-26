@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -14,9 +12,8 @@ var deleteCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if !Delete(args[0]) {
-			fmt.Printf("Failed to delete key [%s]", args[0])
-		}
+		Delete(args[0])
+
 	},
 }
 

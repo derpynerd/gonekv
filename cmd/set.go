@@ -15,8 +15,6 @@ var setCmd = &cobra.Command{
 
 		if Set(args[0], args[1]) {
 			fmt.Printf("[%s]: [%s]", args[0], args[1])
-		} else {
-			fmt.Printf("Error: Failed to set [%s]: [%s] pair", args[0], args[1])
 		}
 
 	},
