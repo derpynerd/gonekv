@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -14,20 +13,12 @@ var deleteCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("Going to delete [%s] from KV-store\n", args[0])
-		key := args[0]
-		var pair = fmt.Sprintf("%s:\n", key) // Add new record for key with empty value - signifying that this record is deleted
 
-		f, err := os.OpenFile("store.dat", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0664)
-		if err != nil {
-			panic("Failed to create/append to file: " + err.Error())
+		if Delete(args[0]) {
+			fmt.Printf("Successfully deleted key [%s]", args[0])
+		} else {
+			fmt.Printf("Failed to delete key [%s]", args[0])
 		}
-		defer f.Close()
-
-		if _, err = f.WriteString(pair); err != nil {
-			panic(err)
-		}
-
-		fmt.Printf("Successfully deleted [%s] key", args[0])
 	},
 }
 
